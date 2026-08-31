@@ -122,6 +122,11 @@ describe CarrierWave::SanitizedFile do
       expect(sanitized_file.filename).to eq("__foo")
     end
 
+    it "should remove invalid byte sequences from the filename" do
+      expect(sanitized_file).to receive(:original_filename).at_least(:once).and_return("test\xDD.jpg")
+      expect(sanitized_file.filename).to eq("test_.jpg")
+    end
+
     it "should remove the path prefix on Windows" do
       expect(sanitized_file).to receive(:original_filename).at_least(:once).and_return('c:\temp\foo.txt')
       expect(sanitized_file.filename).to eq("foo.txt")
